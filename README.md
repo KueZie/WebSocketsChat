@@ -1,5 +1,5 @@
 # WebSocketsChat
-* Interactive chat room utilizing the sockets module.
+### Interactive chat room utilizing the sockets module.
 
 ## Dependencies
 * TinyDB
