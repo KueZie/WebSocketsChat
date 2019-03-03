@@ -3,3 +3,4 @@
 
 ## Dependencies
 * TinyDB
+* Kivy
