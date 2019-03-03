@@ -1,1 +1,4 @@
 # WebSocketsChat
+
+## Dependencies
+* TinyDB
