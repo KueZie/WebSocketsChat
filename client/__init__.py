@@ -1,7 +1,3 @@
-# TODOS:
-# * GUI
-# * Client-Server connection
-
 import socket
 import selectors
 import sys
@@ -14,6 +10,7 @@ class Client:
     _server = ("127.0.0.1", 8080)
     _buffer = b""
     _MAX_BUF = 4096
+    _id=uuid.uuid4()
 
     def __init__(self, username):
         self._client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -25,7 +22,7 @@ class Client:
             print(f"[FATAL] Failed to connect to server with address {self._server[0]}:{self._server[1]}. Error: {e}")
 
         self._username = username
-        data = types.SimpleNamespace(id=uuid.uuid4(), out_buffer=b"", total_bytes_read=0)
+        data = types.SimpleNamespace(out_buffer=b"", total_bytes_read=0)
         self._selector.register(self._client_socket, selectors.EVENT_READ | selectors.EVENT_WRITE, data=data)
         
         try:
@@ -48,18 +45,19 @@ class Client:
             self._buffer = socket.recv(self._MAX_BUF)
             bytes_read = len(self._buffer)
             if len(self._buffer) != 0:
-                print(f"[CLIENT] Recieved {self._buffer} from {socket} with and id of {data.id}.")
+                print(f"[CLIENT] Recieved {self._buffer} from server : {socket}")
                 data.total_bytes_read += bytes_read
             if bytes_read == 0:
-                print(f"[CLIENT] Closing connection with id {data.id}.")
+                print(f"[CLIENT] Closing connection with server.")
                 self._selector.unregister(socket)
                 socket.close()
         if bitmask & selectors.EVENT_WRITE:
             if len(data.out_buffer) == 0:
-                msg = input("-> ")
+                raw = input("-> ")
+                msg = str(self._id) + "::::" + raw
                 data.out_buffer = msg.encode()
 
-            print(f"[CLIENT] Sending {msg} to {data.id}.")
+            print(f"[CLIENT] Sending {msg} to server.")
             data_send = socket.send(data.out_buffer)
             data.out_buffer = data.out_buffer[data_send:]
 client = Client("Hunter")

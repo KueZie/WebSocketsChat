@@ -16,7 +16,7 @@ class Server:
         print(f"[SERVER] Listening on {host}:{port}")
         self.server_socket.setblocking(False)
 
-        self._db = TinyDB("./database.json")
+        self._db = TinyDB("./server/database.json")
         self._query = Query()
 
         self.selector = selectors.DefaultSelector() # Setup selector
@@ -50,7 +50,8 @@ class Server:
             bytes_recieved = len(self._buffer)
             if bytes_recieved != 0:
                 print(f"Recieved \"{self._buffer}\" from {sock.getsockname()}")
-                data.out_buffer += self._buffer
+                print((self._buffer.decode().split("::::")[1]).encode())
+                data.out_buffer += (self._buffer.decode().split("::::")[1]).encode()
             else:
                 print(f"[SERVER] Closing connection to {data.address}.")
                 self.selector.unregister(sock)
